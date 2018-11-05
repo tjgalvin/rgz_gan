@@ -95,9 +95,6 @@ def main(files: pd.DataFrame, out_path: str, *args,
 
     for (index, row) in tqdm(df.iterrows()):
         f = row['filename']
-        
-        if index > 100:
-            break
 
         try:
             # If no reliable IR position, move a long
