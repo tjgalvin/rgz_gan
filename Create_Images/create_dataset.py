@@ -85,7 +85,7 @@ def main(files: pd.DataFrame, out_path: str, *args,
         Exception -- Catch all used for removing files that fail preprocessing
     """
 
-    shape = get_fits(f"{first_path}/{files.iloc[0, 'filename']}").shape
+    shape = get_fits(f"{first_path}/{files['filename'].values[0]}").shape
     height, width = shape
 
     print(f'Derived height, width: {height}, {width}')
