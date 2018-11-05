@@ -98,7 +98,7 @@ def main(files: pd.DataFrame, out_path: str, *args,
         
         if index > 100:
             break
-            
+
         try:
             # If no reliable IR position, move a long
             if row['consensus.ir_ra'] == -99:
@@ -129,7 +129,7 @@ def main(files: pd.DataFrame, out_path: str, *args,
 
     # Pickle up the objects
     with open(out_path, 'wb') as of:
-        pickle.dump(of, to_dump)
+        pickle.dump(to_dump, of)
 
     return 
 
