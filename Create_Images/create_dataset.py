@@ -135,5 +135,5 @@ if __name__ == '__main__':
 
     df = pd.read_csv('FIRST_Cata_Images.csv')
 
-    main(df)
+    main(df, 'rgz_images.pkl')
     
