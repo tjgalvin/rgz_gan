@@ -29,9 +29,6 @@ def Gaussian(yx: tuple, cen: tuple, sigma: float):
     y, x = yx
     y0, x0 = cen
 
-    # RA increases on sky from right to left. Array indices do the opposite.
-    x0 = -x0
-
     # Do the meshing
     A = 1 / (2*sigma**2)
     eq =  np.exp(-A*((x-x0)**2 + (y-y0)**2)) #Gaussian
@@ -50,7 +47,10 @@ def make_ir_host(center_pos: SkyCoord, ir_pos: SkyCoord, shape: tuple):
     offsets = center_pos.spherical_offsets_to(ir_pos)
 
     cen_xy = np.array(shape) // 2
-    dx, dy = offsets / FIRST_PIX
+
+    # ra increases right to left. Arrays do not.
+    dx = -(offsets[0].to(u.arcsecond) / FIRST_PIX)
+    dy = offsets[1].to(u.arcsecond) / FIRST_PIX
     
     yx = np.meshgrid(np.arange(shape[1]), np.arange(shape[0]))
     mask = Gaussian(yx, (cen_xy[0] + dy, cen_xy[1] + dx), FIRST_SIG)
