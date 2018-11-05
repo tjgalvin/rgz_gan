@@ -1,0 +1,9 @@
+name: gan_rgz
+channels:
+  - defaults
+dependencies:
+  - astropy=3.0.5
+  - matplotlib=3.0.1
+  - numpy=1.15.3
+  - pandas=0.23.4
+  - python=3.7.1
