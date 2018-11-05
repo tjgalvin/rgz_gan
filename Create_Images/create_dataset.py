@@ -95,6 +95,10 @@ def main(files: pd.DataFrame, out_path: str, *args,
 
     for (index, row) in tqdm(df.iterrows()):
         f = row['filename']
+        
+        if index > 100:
+            break
+            
         try:
             # If no reliable IR position, move a long
             if row['consensus.ir_ra'] == -99:
@@ -125,7 +129,7 @@ def main(files: pd.DataFrame, out_path: str, *args,
 
     # Pickle up the objects
     with open(out_path, 'wb') as of:
-        pickle.dump(out_path, to_dump)
+        pickle.dump(of, to_dump)
 
     return 
 
