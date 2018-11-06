@@ -12,7 +12,6 @@ from astropy.coordinates import SkyCoord
 
 np.random.seed(42) # Order is needed in the Universe
 
-
 FIRST_PIX = 1.8*u.arcsecond # Pixel size of FIRST survey. Square pixels
 FIRST_FWHM = 5*u.arcsecond / FIRST_PIX
 FIRST_SIG = FIRST_FWHM / 2.355
@@ -69,9 +68,22 @@ def get_fits(f: str):
     return img
 
 
+def create_pickle(to_dump: dict, path: str):
+    """Helper function to create a new pickle file
+    
+    Arguments:
+        to_dump {dict} -- The set of RGZ images/catalogue to write
+        path {str} -- Path of pickle file
+    """
+    # Pickle up the objects
+    with open(path, 'wb') as of:
+        pickle.dump(to_dump, of)
+
+
 def main(files: pd.DataFrame, out_path: str, *args, 
         first_path: str='Images/first',
-        wise_path: str='Images/wise_reprojected', 
+        wise_path: str='Images/wise_reprojected',
+        max_size: int= 5000, 
         **kwargs):
     """Run the preprocessing on the set of files
     
@@ -80,6 +92,7 @@ def main(files: pd.DataFrame, out_path: str, *args,
         out_path {str} -- Name of the file to create
         first_path {str} -- Relative path containing the first fits images
         wise_path {str} -- Relative path containing the wise reprojected fits images
+        max_size {int} -- Number of items to store before creating a new pickle
 
     Raises:
         Exception -- Catch all used for removing files that fail preprocessing
@@ -90,6 +103,7 @@ def main(files: pd.DataFrame, out_path: str, *args,
 
     print(f'Derived height, width: {height}, {width}')
 
+    item = 0
     failed  = [] 
     to_dump = {'first':[], 'wise':[], 'host':[], 'row':[]}
 
@@ -114,6 +128,13 @@ def main(files: pd.DataFrame, out_path: str, *args,
             to_dump['host'].append(mask.astype('f'))
             to_dump['row'].append(row)
         
+            # Dump out items and start fresh
+            if len(to_dump['first']) == max_size:
+                create_pickle(to_dump, f"{out_path}.{item}")
+                item += 1
+                to_dump = {'first':[], 'wise':[], 'host':[], 'row':[]}
+
+
         except ValueError as ve:
             print(f"{f}: {ve}")
             failed.append(row)
@@ -124,9 +145,9 @@ def main(files: pd.DataFrame, out_path: str, *args,
         except Exception as e:
             raise e
 
-    # Pickle up the objects
-    with open(out_path, 'wb') as of:
-        pickle.dump(to_dump, of)
+    # Save residual items
+    if lem(to_dump['first']) > 0:
+        create_pickle(to_dump, f"{out_path}.{item}")
 
     return 
 
