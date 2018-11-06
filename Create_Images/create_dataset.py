@@ -146,7 +146,7 @@ def main(files: pd.DataFrame, out_path: str, *args,
             raise e
 
     # Save residual items
-    if lem(to_dump['first']) > 0:
+    if len(to_dump['first']) > 0:
         create_pickle(to_dump, f"{out_path}.{item}")
 
     return 
